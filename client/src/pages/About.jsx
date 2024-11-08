@@ -63,7 +63,7 @@ const About = () => {
           <a
             href="/listings"
             className="bg-blue-500 text-white py-3 px-6 rounded-full font-bold shadow-md hover:bg-blue-600 transition"
-          >
+          > Made by vivek
             Browse Listings
           </a>
         </section>
