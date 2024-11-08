@@ -61,12 +61,12 @@ const About = () => {
             Ready to find your next student home? Start exploring our listings today!
           </p>
           <p className="text-base sm:text-lg md:text-xl text-gray-700 mb-6">
-            "This project was developed by me, showcasing my skills in web development and design. I implemented features such as user authentication, dynamic content handling, and a seamless user experience using modern frameworks and tools like [add your specific stack/tools here]. It reflects my dedication to creating functional, intuitive applications that meet user needs effectively."
+            "This project was developed by Vivek Kumar, showcasing my skills in web development and design. I implemented features such as user authentication, dynamic content handling, and a seamless user experience using Mern Stack. It reflects my dedication to creating functional, intuitive applications that meet user needs effectively."
           </p>
           <a
             href="/listings"
             className="bg-blue-500 text-white py-3 px-6 rounded-full font-bold shadow-md hover:bg-blue-600 transition"
-          > Made by vivek
+          >
             Browse Listings
           </a>
         </section>
