@@ -31,8 +31,8 @@ export default function Header() {
           {/* Home Icon as Logo */}
           <FaHome className='text-white text-3xl mr-2' /> {/* Home icon */}
           <h1 className='font-bold text-xl sm:text-2xl flex flex-wrap bg-clip-text text-transparent bg-gradient-to-r from-yellow-300 to-white'>
-            <span className=''>Student</span>
-            <span className=''>Nest</span>
+            <span className=''>Rental</span>
+            <span className=''>Dost</span>
           </h1>
         </Link>
         <form
