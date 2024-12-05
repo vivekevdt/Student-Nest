@@ -53,49 +53,8 @@
 ## 📂 **GitHub Repository**  
 [GitHub Repository - Student Nest](https://github.com/vickey18/student-nest)  
 
----
+## **For any questions or suggestions, feel free to reach out**:
+- **Email:** [nitrrmcavivekkumar@gmail.com](mailto:nitrrmcavivekkumar@gmail.com)  
+- **GitHub:** [github.com/vickey18](https://github.com/vickey18)  
+- **LinkedIn:** [linkedin.com/in/vivek-kumar](https://linkedin.com/in/vivek-kumar)  
 
-## 📖 **How to Run Locally**  
-
-1. **Clone the repository**:  
-   ```bash
-   git clone https://github.com/vickey18/student-nest.git
-   cd student-nest
-Install dependencies for both frontend and backend:
-
-bash
-Copy code
-cd client
-npm install
-cd ..
-cd server
-npm install
-Set up environment variables:
-
-Create a .env file in the server folder.
-Add the following variables:
-env
-Copy code
-MONGO_URI=your-mongodb-connection-string
-JWT_SECRET=your-jwt-secret
-GOOGLE_CLIENT_ID=your-google-client-id
-GOOGLE_CLIENT_SECRET=your-google-client-secret
-Run the application:
-
-bash
-Copy code
-cd server
-npm start
-Access the application:
-Open your browser and navigate to http://localhost:3000.
-
-🛠️ Upcoming Features
-User messaging system to contact property owners.
-Enhanced location-based search options.
-Notifications for new room listings.
-📫 Contact
-For any questions or suggestions, feel free to reach out:
-
-Email: nitrrmcavivekkumar@gmail.com
-GitHub: github.com/vickey18
-LinkedIn: linkedin.com/in/vivek-kumar
