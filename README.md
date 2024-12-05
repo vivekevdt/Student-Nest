@@ -1,6 +1,3 @@
-Here’s the complete **README.md** content for your **Student Nest** project:
-
-```markdown
 # 🏠 Student Nest  
 
 **Student Nest** is a MERN stack-based accommodation platform designed to help students easily find and manage room listings. With features like secure authentication, sorting and filtering options, and an admin panel, the platform ensures a seamless user experience for students and property managers alike.  
@@ -64,57 +61,41 @@ Here’s the complete **README.md** content for your **Student Nest** project:
    ```bash
    git clone https://github.com/vickey18/student-nest.git
    cd student-nest
-   ```
+Install dependencies for both frontend and backend:
 
-2. **Install dependencies for both frontend and backend**:  
-   ```bash
-   cd client
-   npm install
-   cd ..
-   cd server
-   npm install
-   ```
+bash
+Copy code
+cd client
+npm install
+cd ..
+cd server
+npm install
+Set up environment variables:
 
-3. **Set up environment variables**:  
-   - Create a `.env` file in the `server` folder.  
-   - Add the following variables:  
-     ```env
-     MONGO_URI=your-mongodb-connection-string
-     JWT_SECRET=your-jwt-secret
-     GOOGLE_CLIENT_ID=your-google-client-id
-     GOOGLE_CLIENT_SECRET=your-google-client-secret
-     ```
+Create a .env file in the server folder.
+Add the following variables:
+env
+Copy code
+MONGO_URI=your-mongodb-connection-string
+JWT_SECRET=your-jwt-secret
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+Run the application:
 
-4. **Run the application**:  
-   ```bash
-   cd server
-   npm start
-   ```
+bash
+Copy code
+cd server
+npm start
+Access the application:
+Open your browser and navigate to http://localhost:3000.
 
-5. **Access the application**:  
-   Open your browser and navigate to `http://localhost:3000`.  
+🛠️ Upcoming Features
+User messaging system to contact property owners.
+Enhanced location-based search options.
+Notifications for new room listings.
+📫 Contact
+For any questions or suggestions, feel free to reach out:
 
----
-
-## 🛠️ **Upcoming Features**  
-
-- User messaging system to contact property owners.  
-- Enhanced location-based search options.  
-- Notifications for new room listings.  
-
----
-
-## 📫 **Contact**  
-
-For any questions or suggestions, feel free to reach out:  
-
-- **Email:** [nitrrmcavivekkumar@gmail.com](mailto:nitrrmcavivekkumar@gmail.com)  
-- **GitHub:** [github.com/vickey18](https://github.com/vickey18)  
-- **LinkedIn:** [linkedin.com/in/vivek-kumar](https://linkedin.com/in/vivek-kumar-525988210)  
-
----
-
-**Thank you for exploring Student Nest!** 😊
-```
-
-Copy this into your `README.md` file for your project.
+Email: nitrrmcavivekkumar@gmail.com
+GitHub: github.com/vickey18
+LinkedIn: linkedin.com/in/vivek-kumar
