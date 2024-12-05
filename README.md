@@ -1,4 +1,4 @@
-Here is the **README** content for your **Student Nest** project:
+Here’s the complete **README.md** content for your **Student Nest** project:
 
 ```markdown
 # 🏠 Student Nest  
@@ -115,6 +115,6 @@ For any questions or suggestions, feel free to reach out:
 ---
 
 **Thank you for exploring Student Nest!** 😊
-``` 
+```
 
-Copy and paste this into the `README.md` file for your Student Nest project.
+Copy this into your `README.md` file for your project.
