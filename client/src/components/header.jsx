@@ -25,49 +25,51 @@ export default function Header() {
   }, [location.search]);
 
   return (
-    <header className='bg-gradient-to-r from-blue-600 to-blue-400 shadow-md'>
-      <div className='flex justify-between items-center max-w-6xl mx-auto p-5'>
-        <Link to='/' className='flex items-center'>
-          {/* Home Icon as Logo */}
-          <FaHome className='text-white text-3xl mr-2' /> {/* Home icon */}
-          <h1 className='font-bold text-xl sm:text-2xl flex flex-wrap bg-clip-text text-transparent bg-gradient-to-r from-yellow-300 to-white'>
-            <span className=''>Rental</span>
-            <span className=''>Dost</span>
+    <header className="bg-gradient-to-r from-blue-600 to-blue-400 shadow-md">
+      <div className="flex flex-wrap justify-between items-center max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+        {/* Logo and Home Link */}
+        <Link to="/" className="flex items-center mb-2 sm:mb-0">
+          <FaHome className="text-white text-3xl mr-2" />
+          <h1 className="font-bold text-lg sm:text-xl md:text-2xl bg-clip-text text-transparent bg-gradient-to-r from-yellow-300 to-white">
+            <span>Rental</span>
+            <span>Dost</span>
           </h1>
         </Link>
+
+        {/* Search Form */}
         <form
           onSubmit={handleSubmit}
-          className='bg-white p-3 rounded-lg flex items-center shadow-md'
+          className="flex items-center bg-white p-2 rounded-lg shadow-md w-full sm:w-auto sm:mb-0"
         >
           <input
-            type='text'
-            placeholder='Search for student rooms...'
-            className='bg-transparent focus:outline-none w-24 sm:w-64 text-lg'
+            type="text"
+            placeholder="Search for student rooms..."
+            className="bg-transparent focus:outline-none flex-grow text-sm sm:text-lg px-2"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
           <button type="submit">
-            <FaSearch className='text-blue-600' />
+            <FaSearch className="text-blue-600 text-xl" />
           </button>
         </form>
-        <ul className='flex gap-6'>
-          <Link to='/'>
-            <li className='text-white hover:underline text-lg'>
-              Home
-            </li>
+
+        {/* Navigation Links */}
+        <ul className="flex gap-4 sm:gap-6 items-center mt-3 sm:mt-0">
+          <Link to="/">
+            <li className="text-white hover:underline text-sm sm:text-lg">Home</li>
           </Link>
-          <Link to='/about'>
-            <li className='text-white hover:underline text-lg'>About</li>
+          <Link to="/about">
+            <li className="text-white hover:underline text-sm sm:text-lg">About</li>
           </Link>
-          <Link to='/profile'>
+          <Link to="/profile">
             {currentUser ? (
               <img
-                className='rounded-full h-9 w-9 object-cover'
+                className="rounded-full h-8 w-8 sm:h-9 sm:w-9 object-cover"
                 src={currentUser.avatar}
-                alt='profile'
+                alt="profile"
               />
             ) : (
-              <li className='text-white hover:underline text-lg'> Sign in</li>
+              <li className="text-white hover:underline text-sm sm:text-lg">Sign in</li>
             )}
           </Link>
         </ul>
