@@ -1,5 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config();  // Ensure dotenv is configured before using any env variables
+import cors from 'cors';
+
 
 import express from 'express';
 import mongoose from 'mongoose';
@@ -27,6 +29,14 @@ mongoose.connect(process.env.db_url)
 const app = express();
 app.use(express.json());
 app.use(cookieParser());  // Cookie parser middleware
+app.use(cors());
+
+// Or, to enable CORS for specific origins:
+app.use(cors({
+  origin: 'http://localhost:5173', // Replace with your frontend URL
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed methods
+  allowedHeaders: ['Content-Type', 'Authorization'], // Specify allowed headers
+}));
 
 
 // Routes
