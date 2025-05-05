@@ -11,6 +11,9 @@ import path from 'path';
 
 import cookieParser from 'cookie-parser';
 
+const PORT = process.env.PORT || 3000;
+
+
 mongoose.connect(process.env.db_url)
   .then(() => {
     console.log('Database connected successfully');
@@ -25,9 +28,6 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());  // Cookie parser middleware
 
-app.listen(3000, () => {
-  console.log('App is listening on port 3000');
-});
 
 // Routes
 app.use('/api/user', userRouter);
@@ -50,3 +50,8 @@ app.use((err, req, res, next) => {
     message,
   });
 });
+
+app.listen(PORT, () => {
+  console.log(`App is listening on port ${PORT}`);
+});
+
