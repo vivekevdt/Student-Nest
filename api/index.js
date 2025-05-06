@@ -31,6 +31,19 @@ app.use(express.json());
 app.use(cookieParser());  // Cookie parser middleware
 app.use(cors());
 
+const allowedOrigins = ['http://localhost:5173', 'https://student-nest-web-vivek.onrender.com'];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true
+}));
+
+
 
 
 // Routes
