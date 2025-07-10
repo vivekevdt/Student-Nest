@@ -30,7 +30,7 @@ const Signin = () => {
 
     try{
       dispatch(signInStart());
-      const res = await fetch('https://student-nest-api.onrender.com/api/auth/signin',
+      const res = await fetch('https://student-nest-vivek.onrender.com/api/auth/signin',
     {
       method:"POST",
       headers:{
