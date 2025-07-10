@@ -61,7 +61,7 @@ export default function Search() {
       setLoading(true);
       setShowMore(false);
       const searchQuery = urlParams.toString();
-      const res = await fetch(`https://student-nest-api.onrender.com/api/listing/get?${searchQuery}`);
+      const res = await fetch(`https://student-nest-vivek.onrender.com/api/listing/get?${searchQuery}`);
       const data = await res.json();
       console.log(data)
 
