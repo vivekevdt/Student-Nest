@@ -39,7 +39,7 @@ export default function Listing() {
     const fetchListing = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`https://student-nest-api.onrender.com/api/listing/get/${params.listingId}`);
+        const res = await fetch(`https://student-nest-vivek.onrender.com/api/listing/get/${params.listingId}`);
         const data = await res.json();
         console.log(listing);
         if (data.success === false) {
