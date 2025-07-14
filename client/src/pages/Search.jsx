@@ -63,8 +63,6 @@ export default function Search() {
       const searchQuery = urlParams.toString();
       const res = await fetch(`https://student-nest-vivek.onrender.com/api/listing/get?${searchQuery}`);
       const data = await res.json();
-      console.log(data)
-
       if (data.length > 8) {
         setShowMore(true);
       }
@@ -76,34 +74,16 @@ export default function Search() {
   }, [location.search]);
 
   const handleChange = (e) => {
-    if (
-      e.target.id === 'all' ||
-      e.target.id === 'single' ||
-      e.target.id === 'sharing'
-    ) {
-      setSidebardata({ ...sidebardata, type: e.target.id });
-    }
+    const { id, value, checked } = e.target;
 
-    if (e.target.id === 'searchTerm') {
-      setSidebardata({ ...sidebardata, searchTerm: e.target.value });
-    }
-
-    if (
-      e.target.id === 'studyTable' ||
-      e.target.id === 'bathroom' ||
-      e.target.id === 'balcony' ||
-      e.target.id === 'electricityBill' ||
-      e.target.id === 'offer'
-    ) {
-      setSidebardata({
-        ...sidebardata,
-        [e.target.id]: e.target.checked,
-      });
-    }
-
-    if (e.target.id === 'sort_order') {
-      const sort = e.target.value.split('_')[0] || 'created_at';
-      const order = e.target.value.split('_')[1] || 'desc';
+    if (['all', 'single', 'sharing'].includes(id)) {
+      setSidebardata({ ...sidebardata, type: id });
+    } else if (id === 'searchTerm') {
+      setSidebardata({ ...sidebardata, searchTerm: value });
+    } else if (['studyTable', 'bathroom', 'balcony', 'electricityBill', 'offer'].includes(id)) {
+      setSidebardata({ ...sidebardata, [id]: checked });
+    } else if (id === 'sort_order') {
+      const [sort, order] = value.split('_');
       setSidebardata({ ...sidebardata, sort, order });
     }
   };
@@ -120,17 +100,14 @@ export default function Search() {
     urlParams.set('offer', sidebardata.offer);
     urlParams.set('sort', sidebardata.sort);
     urlParams.set('order', sidebardata.order);
-    const searchQuery = urlParams.toString();
-    navigate(`/search?${searchQuery}`);
+    navigate(`/search?${urlParams.toString()}`);
   };
 
   const onShowMoreClick = async () => {
-    const numberOfListings = listings.length;
-    const startIndex = numberOfListings;
+    const startIndex = listings.length;
     const urlParams = new URLSearchParams(location.search);
     urlParams.set('startIndex', startIndex);
-    const searchQuery = urlParams.toString();
-    const res = await fetch(`https://student-nest-api.onrender.com/api/listing/get?${searchQuery}`);
+    const res = await fetch(`https://student-nest-vivek.onrender.com/api/listing/get?${urlParams}`);
     const data = await res.json();
     if (data.length < 9) {
       setShowMore(false);
@@ -139,156 +116,93 @@ export default function Search() {
   };
 
   return (
-    <div className='flex flex-col md:flex-row bg-white'>
-      <div className='p-7 border-b-2 md:border-r-2 md:min-h-screen bg-blue-50'>
-        <form onSubmit={handleSubmit} className='flex flex-col gap-8'>
-          <div className='flex items-center gap-2'>
-            <label className='whitespace-nowrap font-semibold text-blue-600'>
-              Search Term:
+    <div className='p-4 bg-zinc-100'>
+      {/* Top Search Bar */}
+      <form
+        onSubmit={handleSubmit}
+        className='bg-blue-50 p-4 rounded-lg shadow-md flex flex-wrap gap-4 items-center justify-between'
+      >
+        <input
+          type='text'
+          id='searchTerm'
+          placeholder='Search rooms...'
+          className='border p-2 rounded-lg flex-1 min-w-[180px]'
+          value={sidebardata.searchTerm}
+          onChange={handleChange}
+        />
+
+        <select
+          id='sort_order'
+          onChange={handleChange}
+          defaultValue='created_at_desc'
+          className='border p-2 rounded-lg'
+        >
+          <option value='regularPrice_desc'>Price high to low</option>
+          <option value='regularPrice_asc'>Price low to high</option>
+          <option value='createdAt_desc'>Latest</option>
+          <option value='createdAt_asc'>Oldest</option>
+        </select>
+
+        <div className='flex gap-2 items-center flex-wrap text-sm'>
+          <label>Type:</label>
+          {['all', 'single', 'sharing'].map((t) => (
+            <label key={t} className='flex items-center gap-1'>
+              <input
+                type='radio'
+                id={t}
+                name='type'
+                onChange={handleChange}
+                checked={sidebardata.type === t}
+              />
+              {t}
             </label>
-            <input
-              type='text'
-              id='searchTerm'
-              placeholder='Search for rooms...'
-              className='border rounded-lg p-3 w-full focus:ring-2 focus:ring-blue-400'
-              value={sidebardata.searchTerm}
-              onChange={handleChange}
-            />
-          </div>
-          <div className='flex gap-2 flex-wrap items-center'>
-            <label className='font-semibold text-blue-600'>Type:</label>
-            <div className='flex gap-2'>
+          ))}
+        </div>
+
+        <div className='flex gap-2 items-center flex-wrap text-sm'>
+          <label>Amenities:</label>
+          {['studyTable', 'bathroom', 'balcony', 'electricityBill', 'offer'].map((a) => (
+            <label key={a} className='flex items-center gap-1 capitalize'>
               <input
                 type='checkbox'
-                id='all'
-                className='w-5'
+                id={a}
                 onChange={handleChange}
-                checked={sidebardata.type === 'all'}
+                checked={sidebardata[a]}
               />
-              <span>Single & Sharing</span>
-            </div>
-            <div className='flex gap-2'>
-              <input
-                type='checkbox'
-                id='single'
-                className='w-5'
-                onChange={handleChange}
-                checked={sidebardata.type === 'single'}
-              />
-              <span>single</span>
-            </div>
-            <div className='flex gap-2'>
-              <input
-                type='checkbox'
-                id='sharing'
-                className='w-5'
-                onChange={handleChange}
-                checked={sidebardata.type === 'sharing'}
-              />
-              <span>sharing</span>
-            </div>
-            <div className='flex gap-2'>
-              <input
-                type='checkbox'
-                id='offer'
-                className='w-5'
-                onChange={handleChange}
-                checked={sidebardata.offer}
-              />
-              <span>Offer</span>
-            </div>
-          </div>
-          <div className='flex gap-2 flex-wrap items-center'>
-            <label className='font-semibold text-blue-600'>Amenities:</label>
-            <div className='flex gap-2'>
-              <input
-                type='checkbox'
-                id='studyTable'
-                className='w-5'
-                onChange={handleChange}
-                checked={sidebardata.studyTable}
-              />
-              <span>Study Table</span>
-            </div>
-            <div className='flex gap-2'>
-              <input
-                type='checkbox'
-                id='bathroom'
-                className='w-5'
-                onChange={handleChange}
-                checked={sidebardata.bathroom}
-              />
-              <span>Attached Bathroom</span>
-            </div>
-            <div className='flex gap-2'>
-              <input
-                type='checkbox'
-                id='balcony'
-                className='w-5'
-                onChange={handleChange}
-                checked={sidebardata.balcony}
-              />
-              <span>Balcony</span>
-            </div>
-            <div className='flex gap-2'>
-              <input
-                type='checkbox'
-                id='electricityBill'
-                className='w-5'
-                onChange={handleChange}
-                checked={sidebardata.electricityBill}
-              />
-              <span>Electricity Bill</span>
-            </div>
-          </div>
-          <div className='flex items-center gap-2'>
-            <label className='font-semibold text-blue-600'>Sort:</label>
-            <select
-              onChange={handleChange}
-              defaultValue={'created_at_desc'}
-              id='sort_order'
-              className='border rounded-lg p-3'
-            >
-              <option value='regularPrice_desc'>Price high to low</option>
-              <option value='regularPrice_asc'>Price low to high</option>
-              <option value='createdAt_desc'>Latest</option>
-              <option value='createdAt_asc'>Oldest</option>
-            </select>
-          </div>
-          <button className='bg-blue-600 text-white p-3 rounded-lg uppercase hover:opacity-95 transition-all duration-200'>
-            <FaSearch className='inline mr-2' /> Search
-          </button>
-        </form>
-      </div>
-      <div className='flex-1 p-5'>
-        <h1 className='text-3xl font-semibold border-b p-3 text-blue-700 mt-5'>
-          Listing Results:
-        </h1>
-        <div className='flex flex-wrap gap-4'>
+              {a.replace(/([A-Z])/g, ' $1')}
+            </label>
+          ))}
+        </div>
+
+        <button className='bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 flex items-center gap-2'>
+          <FaSearch /> Search
+        </button>
+      </form>
+
+      {/* Listings */}
+      <div className='mt-6'>
+        <h2 className='text-2xl font-bold text-blue-700 mb-4'>Listing Results:</h2>
+        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-5'>
           {!loading && listings.length === 0 && (
-            <p className='text-xl text-blue-700'>No listing found!</p>
+            <p className='text-blue-600 col-span-full'>No listing found.</p>
           )}
           {loading && (
-            <p className='text-xl text-blue-700 text-center w-full'>
-              Loading...
-            </p>
+            <p className='text-blue-600 col-span-full text-center'>Loading...</p>
           )}
-
           {!loading &&
-            listings &&
             listings.map((listing) => (
               <ListingItem key={listing._id} listing={listing} />
             ))}
-
-          {showMore && (
-            <button
-              onClick={onShowMoreClick}
-              className='text-blue-600 hover:underline p-7 text-center w-full'
-            >
-              Show more
-            </button>
-          )}
         </div>
+
+        {showMore && (
+          <button
+            onClick={onShowMoreClick}
+            className='text-blue-600 hover:underline p-6 text-center w-full block'
+          >
+            Show more
+          </button>
+        )}
       </div>
     </div>
   );

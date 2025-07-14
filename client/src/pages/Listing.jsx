@@ -5,27 +5,19 @@ import SwiperCore from 'swiper';
 import { useSelector } from 'react-redux';
 import { Navigation } from 'swiper/modules';
 import 'swiper/css/bundle';
-import {
-  FaBath,
-  FaBed,
-  FaChair,
-  FaMapMarkedAlt,
-  FaMapMarkerAlt,
-  FaParking,
-  FaShare,
-} from 'react-icons/fa';
+
+import { FaMapMarkerAlt, FaShare } from 'react-icons/fa';
 import ArticleIcon from '@mui/icons-material/Article';
 import TableRestaurantIcon from '@mui/icons-material/TableRestaurant';
-import Contact from '../components/Contact';
 import ShowerIcon from '@mui/icons-material/Shower';
 import HouseSidingIcon from '@mui/icons-material/HouseSiding';
 import BalconyIcon from '@mui/icons-material/Balcony';
-import { current } from '@reduxjs/toolkit';
 
-// https://sabe.io/blog/javascript-format-numbers-commas#:~:text=The%20best%20way%20to%20format,format%20the%20number%20with%20commas.
+import Contact from '../components/Contact';
+
+SwiperCore.use([Navigation]);
 
 export default function Listing() {
-  SwiperCore.use([Navigation]);
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -34,24 +26,18 @@ export default function Listing() {
   const params = useParams();
   const { currentUser } = useSelector((state) => state.user);
 
-  // console.log(currentUser._id,listing?.userRef);
   useEffect(() => {
     const fetchListing = async () => {
       try {
         setLoading(true);
         const res = await fetch(`https://student-nest-vivek.onrender.com/api/listing/get/${params.listingId}`);
         const data = await res.json();
-        console.log(listing);
-        if (data.success === false) {
-          setError(true);
-          setLoading(false);
-          return;
-        }
+        if (data.success === false) throw new Error();
         setListing(data);
-        setLoading(false);
         setError(false);
-      } catch (error) {
+      } catch {
         setError(true);
+      } finally {
         setLoading(false);
       }
     };
@@ -61,99 +47,112 @@ export default function Listing() {
   return (
     <main>
       {loading && <p className='text-center my-7 text-2xl'>Loading...</p>}
-      {error && (
-        <p className='text-center my-7 text-2xl'>Something went wrong!</p>
-      )}
+      {error && <p className='text-center my-7 text-2xl'>Something went wrong!</p>}
+
       {listing && !loading && !error && (
         <div>
+          {/* Image Slider */}
           <Swiper navigation>
             {listing.imageUrls.map((url) => (
               <SwiperSlide key={url}>
                 <div
-                  className='h-[550px]'
-                  style={{
-                    background: `url(${url}) center no-repeat`,
-                    backgroundSize: 'cover',
-                  }}
-                ></div>
+                  className='h-[500px] sm:h-[550px] bg-center bg-no-repeat bg-cover'
+                  style={{ backgroundImage: `url(${url})` }}
+                />
               </SwiperSlide>
             ))}
           </Swiper>
-          <div className='fixed top-[13%] right-[3%] z-10 border rounded-full w-12 h-12 flex justify-center items-center bg-slate-100 cursor-pointer'>
+
+          {/* Share Button */}
+          <div className='fixed top-[13%] right-[3%] z-10 border shadow-md rounded-full w-12 h-12 flex justify-center items-center bg-white cursor-pointer'>
             <FaShare
-              className='text-slate-500'
+              className='text-slate-600'
               onClick={() => {
                 navigator.clipboard.writeText(window.location.href);
                 setCopied(true);
-                setTimeout(() => {
-                  setCopied(false);
-                }, 2000);
+                setTimeout(() => setCopied(false), 2000);
               }}
             />
           </div>
+
           {copied && (
-            <p className='fixed top-[23%] right-[5%] z-10 rounded-md bg-slate-100 p-2'>
+            <p className='fixed top-[23%] right-[5%] z-10 bg-white border shadow-md px-4 py-2 rounded-md'>
               Link copied!
             </p>
           )}
-          <div className='flex flex-col max-w-4xl mx-auto p-3 my-7 gap-4'>
-            <p className='text-2xl font-semibold'>
-              {listing.name} - ₹{' '}
-              {listing.offer
-                ? listing.discountPrice.toLocaleString('en-US')
-                : listing.regularPrice.toLocaleString('en-US')}
-              {listing.type === 'single' && ' / month'}
-            </p>
-            <p className='flex items-center mt-6 gap-2 text-slate-600  text-sm'>
-              <FaMapMarkerAlt className='text-green-700' />
-              {listing.address}
-            </p>
-            <div className='flex gap-4'>
-              <p className='bg-red-900 w-full max-w-[200px] text-white text-center p-1 rounded-md'>
-                {listing.type === 'single' ? 'Single Room' : 'Sharing Room'}
+
+          {/* Listing Content */}
+          <div className='flex flex-col max-w-5xl mx-auto p-4 sm:p-6 my-10 gap-5'>
+
+            {/* Title and Price */}
+            <div className='space-y-2'>
+              <h1 className='text-3xl font-bold text-slate-800'>
+                {listing.name} - ₹
+                {listing.offer
+                  ? listing.discountPrice.toLocaleString('en-IN')
+                  : listing.regularPrice.toLocaleString('en-IN')}
+                {listing.type === 'single' && ' / month'}
+              </h1>
+              <p className='flex items-center gap-2 text-slate-600 text-sm'>
+                <FaMapMarkerAlt className='text-green-700' />
+                {listing.address}
               </p>
+            </div>
+
+            {/* Tags */}
+            <div className='flex gap-4 flex-wrap'>
+              <span className='bg-blue-600 text-white px-3 py-1 rounded-md text-sm'>
+                {listing.type === 'single' ? 'Single Room' : 'Sharing Room'}
+              </span>
               {listing.offer && (
-                <p className='bg-green-900 w-full max-w-[200px] text-white text-center p-1 rounded-md'>
-                  ${+listing.regularPrice - +listing.discountPrice} OFF
-                </p>
+                <span className='bg-green-600 text-white px-3 py-1 rounded-md text-sm'>
+                  ₹{(+listing.regularPrice - +listing.discountPrice).toLocaleString('en-IN')} OFF
+                </span>
               )}
             </div>
-            <p className='text-slate-800'>
-              <span className='font-semibold text-black'>Description - </span>
-              {listing.description}
+
+            {/* Description */}
+            <p className='text-slate-700 leading-relaxed'>
+              <span className='font-semibold text-slate-900'>Description:</span> {listing.description}
             </p>
-            <ul className='text-green-900 font-semibold text-sm flex flex-wrap items-center gap-4 sm:gap-6'>
-              <li className='flex items-center gap-1 whitespace-nowrap '>
-                <HouseSidingIcon className='text-lg' />
-                {`${listing.floor}th floor `}
-              </li>
-             
-              <li className='flex items-center gap-1 whitespace-nowrap '>
-          
-                {listing.studyTable ? 'Study Table' : 'No Study Table'}
-              </li>
-              <li className='flex items-center gap-1 whitespace-nowrap '>
-                <ShowerIcon className='text-lg' />
-                {listing.bathroom ? 'Attached Bathroom' : 'Common Bathroom'}
-              </li>
-              <li className='flex items-center gap-1 whitespace-nowrap '>
-                <BalconyIcon className='text-lg' />
-                {listing.balcony ? 'Balcony' : 'No Balcony'}
-              </li>
-              <li className='flex items-center gap-1 whitespace-nowrap '>
-                <ArticleIcon className='text-lg' />
-                {listing.electricityBill ? 'Electricity Bill excluded' : 'Electricity Bill included'}
-              </li>
+
+            {/* Features */}
+            <ul className='grid grid-cols-2 sm:grid-cols-3 gap-4 mt-4 text-slate-800 font-medium text-sm'>
+              <li className='flex items-center gap-2'><HouseSidingIcon /> {listing.floor}th floor</li>
+              <li className='flex items-center gap-2'><TableRestaurantIcon /> {listing.studyTable ? 'Study Table' : 'No Study Table'}</li>
+              <li className='flex items-center gap-2'><ShowerIcon /> {listing.bathroom ? 'Attached Bathroom' : 'Common Bathroom'}</li>
+              <li className='flex items-center gap-2'><BalconyIcon /> {listing.balcony ? 'Balcony' : 'No Balcony'}</li>
+              <li className='flex items-center gap-2'><ArticleIcon /> {listing.electricityBill ? 'Electricity Bill excluded' : 'Electricity Bill included'}</li>
             </ul>
-            { currentUser && listing.userRef !== currentUser._id && !contact &&(
+
+            {/* Contact Button */}
+            {currentUser && listing.userRef !== currentUser._id && !contact && (
               <button
                 onClick={() => setContact(true)}
-                className='bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 p-3'
+                className='bg-slate-800 text-white mt-6 py-3 px-5 rounded-lg hover:bg-slate-700 transition duration-200 uppercase text-sm tracking-wide w-full sm:w-fit'
               >
                 Contact Landlord
               </button>
             )}
             {contact && <Contact listing={listing} />}
+
+            {/* Google Maps Location */}
+            {true ? (
+              <div className='mt-10 w-full h-[300px] rounded-lg overflow-hidden'>
+                <iframe
+                  src={`https://www.google.com/maps?q=${21.255398},${81.599250}&z=15&output=embed`}
+                  width='100%'
+                  height='100%'
+                  style={{ border: 0 }}
+                  allowFullScreen=''
+                  loading='lazy'
+                  referrerPolicy='no-referrer-when-downgrade'
+                  title='Location Map'
+                ></iframe>
+              </div>
+            ) : (
+              <p className='mt-6 text-slate-500 text-sm italic'>Location coordinates not available.</p>
+            )}
           </div>
         </div>
       )}
