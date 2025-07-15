@@ -237,7 +237,10 @@ export default function Profile() {
       <p className='text-green-700 mt-5'>
         {updateSuccess ? 'User is updated successfully!' : ''}
       </p>
-      <button onClick={handleShowListings} className='text-green-700 w-full'>
+
+
+      {/* showing listing */}
+      {/* <button onClick={handleShowListings} className='text-green-700 w-full'>
         Show Listings
       </button>
       <p className='text-red-700 mt-5'>
@@ -282,7 +285,7 @@ export default function Profile() {
             </div>
           ))}
         </div>
-      )}
+      )} */}
     </div>
   );
 }
