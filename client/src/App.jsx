@@ -35,7 +35,7 @@ const App = () => {
           {/* Dashboard routes */}
           <Route path='/dashboard' element={<DashboardHome />} />
         <Route path='/dashboard/listings' element={<MyListings />} />
-        <Route path='/dashboard/add' element={<AddListing />} />
+        <Route path='/dashboard/add' element={<CreateListing />} />
         <Route path='/dashboard/edit/:listingId' element={<EditListing />} />
 
           <Route path="/profile" element={<Profile />} />

@@ -129,7 +129,7 @@ export default function Profile() {
   const handleShowListings = async () => {
     try {
       setShowListingsError(false);
-      const res = await fetch(`https://student-nest-viek.onrender.com/api/user/listings/${currentUser._id}`);
+      const res = await fetch(`https://student-nest-vivek.onrender.com/api/user/listings/${currentUser._id}`);
       const data = await res.json();
       if (data.success === false) {
         setShowListingsError(true);
@@ -219,12 +219,7 @@ export default function Profile() {
         >
           {loading ? 'Loading...' : 'Update'}
         </button>
-        <Link
-          className='bg-green-700 text-white p-3 rounded-lg uppercase text-center hover:opacity-95'
-          to={'/create-listing'}
-        >
-          Create Listing
-        </Link>
+
       </form>
       <div className='flex justify-between mt-5'>
         <span
