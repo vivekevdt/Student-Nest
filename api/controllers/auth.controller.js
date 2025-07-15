@@ -61,7 +61,7 @@ export const signin = async (req, res, next) => {
         // Send the token as an httpOnly cookie
         res.cookie("access_token", token, { httpOnly: true })
             .status(200)
-            .json({validUser });
+            .json({validUser,token });
 
     } catch (error) {
         next(error);
