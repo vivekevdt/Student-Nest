@@ -17,6 +17,18 @@ const userSchema = new mongoose.Schema({
         required:true,
         unique:true
     },
+    role:{
+        type:String,
+        default:"student"
+    },
+    listing:[
+        {
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"listing"
+      }
+    ],
+
+    
     avatar:{
         type:String,
         default:"https://images.app.goo.gl/Z8Requu9qEHYfSTMA"

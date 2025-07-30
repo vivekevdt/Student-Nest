@@ -146,7 +146,7 @@ export default function CreateListing() {
       if (+formData.regularPrice < +formData.discountPrice)
         return setError('Discount price must be lower than regular price');
 
-      if (!formData.location )
+      if (!formData.latitude )
         return setError('Please select a location on the map');
 
       setLoading(true);
