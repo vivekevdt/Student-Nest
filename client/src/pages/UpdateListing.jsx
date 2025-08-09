@@ -10,6 +10,14 @@ import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
 export default function CreateListing() {
+  let apiUrl;
+
+  const host = window.location.hostname;
+  if (host === 'localhost') {
+    apiUrl = 'http://localhost:3000';
+  } else {
+    apiUrl = 'https://student-nest-vivek.onrender.com';
+  }
   const { currentUser } = useSelector((state) => state.user);
   const navigate = useNavigate();
   const params = useParams();
@@ -36,7 +44,7 @@ export default function CreateListing() {
   useEffect(() => {
     const fetchListing = async () => {
       const listingId = params.listingId;
-      const res = await fetch(`https://student-nest-vivek.onrender.com/api/listing/get/${listingId}`);
+      const res = await fetch(apiUrl+`/api/listing/get/${listingId}`);
       const data = await res.json();
       if (data.success === false) {
         console.log(data.message);
@@ -148,7 +156,7 @@ export default function CreateListing() {
         return setError('Discount price must be lower than regular price');
       setLoading(true);
       setError(false);
-      const res = await fetch(`https://student-nest-vivek.onrender.com/api/listing/update/${params.listingId}`, {
+      const res = await fetch(apiUrl+`/api/listing/update/${params.listingId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

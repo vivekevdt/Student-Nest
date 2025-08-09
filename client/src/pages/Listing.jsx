@@ -18,6 +18,16 @@ import Contact from '../components/Contact';
 SwiperCore.use([Navigation]);
 
 export default function Listing() {
+  
+  let apiUrl;
+
+  const host = window.location.hostname;
+  
+  if (host === 'localhost') {
+    apiUrl = 'http://localhost:3000';
+  } else {
+    apiUrl = 'https://student-nest-vivek.onrender.com';
+  }
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
@@ -30,7 +40,7 @@ export default function Listing() {
     const fetchListing = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`https://student-nest-vivek.onrender.com/api/listing/get/${params.listingId}`);
+        const res = await fetch(apiUrl+`/api/listing/get/${params.listingId}`);
         const data = await res.json();
         if (data.success === false) throw new Error();
         setListing(data);

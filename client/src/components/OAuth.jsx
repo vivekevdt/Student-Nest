@@ -8,6 +8,16 @@ import { useNavigate } from 'react-router-dom';
 import { signInSuccess } from '../redux/user/userSlice';
 
 export default function OAuth() {
+  let apiUrl;
+
+const host = window.location.hostname;
+
+if (host === 'localhost') {
+  apiUrl = 'http://localhost:3000';
+} else {
+  apiUrl = 'https://student-nest-vivek.onrender.com';
+}
+
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -20,7 +30,7 @@ export default function OAuth() {
         const result= await signInWithPopup(auth,provider);
 
       
-        const res = await fetch('https://student-nest-vivek.onrender.com/api/auth/google', {
+        const res = await fetch(apiUrl+'/api/auth/google', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -33,6 +43,8 @@ export default function OAuth() {
           });
           const data = await res.json();
           dispatch(signInSuccess(data));
+          localStorage.setItem('token', data.token);
+
           navigate('/');
 
     } catch (error) {

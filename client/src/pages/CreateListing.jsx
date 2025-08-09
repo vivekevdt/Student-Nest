@@ -18,6 +18,17 @@ const CHECKBOX_FIELDS = [
 ];
 
 export default function CreateListing() {
+
+  let apiUrl;
+
+  const host = window.location.hostname;
+  
+  if (host === 'localhost') {
+    apiUrl = 'http://localhost:3000';
+  } else {
+    apiUrl = 'https://student-nest-vivek.onrender.com';
+  }
+  
   const mapRef = useRef(null);
   const mapInstance = useRef(null);
   const markerRef = useRef(null);
@@ -153,7 +164,7 @@ export default function CreateListing() {
       setError(false);
 
       console.log(formData)
-      // const res = await fetch('https://student-nest-vivek.onrender.com/api/listing/create', {
+      // const res = await fetch(apiUrl+'/api/listing/create', {
       //   method: 'POST',
       //   headers: { 'Content-Type': 'application/json' },
       //   body: JSON.stringify({

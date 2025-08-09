@@ -10,6 +10,14 @@ import OAuth from '../components/OAuth';
 
 const Signin = () => {
 
+  let apiUrl;
+
+  const host = window.location.hostname;
+  if (host === 'localhost') {
+    apiUrl = 'http://localhost:3000';
+  } else {
+    apiUrl = 'https://student-nest-vivek.onrender.com';
+  }
   const [formData, setFormData]= useState({});
   const { loading, error } = useSelector((state) => state.user);
 
@@ -30,7 +38,7 @@ const Signin = () => {
 
     try{
       dispatch(signInStart());
-      const res = await fetch('https://student-nest-vivek.onrender.com/api/auth/signin',
+      const res = await fetch(apiUrl+'/api/auth/signin',
     {
       method:"POST",
       headers:{

@@ -4,6 +4,14 @@ import ListingItem from '../components/ListingItem';
 import { FaSearch } from 'react-icons/fa';
 
 export default function Search() {
+  let apiUrl;
+
+  const host = window.location.hostname;
+  if (host === 'localhost') {
+    apiUrl = 'http://localhost:3000';
+  } else {
+    apiUrl = 'https://student-nest-vivek.onrender.com';
+  }
   const navigate = useNavigate();
   const [sidebardata, setSidebardata] = useState({
     searchTerm: '',
@@ -61,7 +69,7 @@ export default function Search() {
       setLoading(true);
       setShowMore(false);
       const searchQuery = urlParams.toString();
-      const res = await fetch(`https://student-nest-vivek.onrender.com/api/listing/get?${searchQuery}`);
+      const res = await fetch(apiUrl+`/api/listing/get?${searchQuery}`);
       const data = await res.json();
       if (data.length > 8) {
         setShowMore(true);
@@ -107,7 +115,7 @@ export default function Search() {
     const startIndex = listings.length;
     const urlParams = new URLSearchParams(location.search);
     urlParams.set('startIndex', startIndex);
-    const res = await fetch(`https://student-nest-vivek.onrender.com/api/listing/get?${urlParams}`);
+    const res = await fetch(apiUrl+`/api/listing/get?${urlParams}`);
     const data = await res.json();
     if (data.length < 9) {
       setShowMore(false);
