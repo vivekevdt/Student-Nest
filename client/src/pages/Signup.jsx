@@ -53,13 +53,10 @@ const Signup = () => {
     }catch(e){
       setLoading(false);
       setError(data.message);
-
-     
+    
     }
     
-   
   }
-
 
 
   return (

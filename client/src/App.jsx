@@ -15,6 +15,7 @@ import DashboardHome from "./pages/Dashboard/Dashboard";
 import MyListings from "./pages/Dashboard/MyListing";
 import AddListing from "./pages/Dashboard/AddListing";
 import EditListing from "./pages/Dashboard/EditListing";
+import HostSignup from "./pages/HostSignup";
 
 
 
@@ -27,6 +28,7 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/signin" element={<Signin />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/signup-host" element={<HostSignup />} />
         <Route path="/about" element={<About />} />
 
         <Route path='/listing/:listingId' element={<Listing />} />

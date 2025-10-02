@@ -55,6 +55,9 @@ export default function Header() {
 
         {/* Navigation Links */}
         <ul className="flex gap-4 sm:gap-6 items-center mt-3 sm:mt-0">
+        <Link to="/signup-host">
+            <li className="text-white hover:underline text-sm sm:text-lg">Become a host</li>
+          </Link>
           <Link to="/">
             <li className="text-white hover:underline text-sm sm:text-lg">Home</li>
           </Link>

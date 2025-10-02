@@ -1,17 +1,26 @@
 import mongoose from "mongoose";
 
-const userSchema = new mongoose.Schema({
-    username:{
+const hostSchema = new mongoose.Schema({
+    firstName:{
+        type:String,
+        required:true,
+        unique:true
+    },
+    lastName:{
+        type:String,
+        unique:true
+    },
+    password:{
+        type:String,
+        required:true,
+        unique:true
+    },
+    contact:{
         type:String,
         required:true,
         unique:true
     },
     email:{
-        type:String,
-        required:true,
-        unique:true
-    },
-    password:{
         type:String,
         required:true,
         unique:true
@@ -31,6 +40,6 @@ const userSchema = new mongoose.Schema({
 }
 ,{timestamps:true});
 
-const User = mongoose.model("User",userSchema);
+const Host = mongoose.model("Host",hostSchema);
 
-export default User;
+export default Host;
