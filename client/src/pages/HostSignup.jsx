@@ -72,6 +72,7 @@ const HostSignup = () => {
       }
       setError(null);
       setLoading(false);
+      alert("Now you can login to you host account");
       navigate("/signin");
     } catch (err) {
       setError("OTP verification failed");

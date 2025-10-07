@@ -54,8 +54,9 @@ const Signin = () => {
         dispatch(signInFailure(data.message));
         return;
       }
+      console.log(data)
       dispatch(signInSuccess(data));
-      navigate('/');
+      navigate(role=="Host"?"/dashboard":"/");
     } catch (e) {
       dispatch(signInFailure(e.message));
     }
@@ -93,14 +94,14 @@ const Signin = () => {
             </button>
             <button
               type="button"
-              onClick={() => setRole("Owner")}
+              onClick={() => setRole("Host")}
               className={`w-1/2 py-2 font-semibold text-center transition 
-                ${role === "Owner"
+                ${role === "Host"
                   ? "border-b-4 border-blue-500 text-blue-600"
                   : "text-gray-500 hover:text-blue-500"
                 }`}
             >
-              Owner Login
+              Host Login
             </button>
           </div>
           {/* 👆 End Tabs */}
