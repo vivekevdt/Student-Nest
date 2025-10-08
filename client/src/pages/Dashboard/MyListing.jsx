@@ -12,7 +12,7 @@ export default function MyListings() {
   const userListings = [
     {
       _id: '1',
-      name: 'Cozy Single Room with Desk',
+      name: 'Cozy Single Room with Desk and Table',
       regularPrice: 6500,
       imageUrls: ['https://images.unsplash.com/photo-1600585154340-be6161a56a0c'],
     },
