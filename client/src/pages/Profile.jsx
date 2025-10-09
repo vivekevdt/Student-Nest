@@ -37,6 +37,7 @@ export default function Profile() {
   const [showListingsError, setShowListingsError] = useState(false);
   const [userListings, setUserListings] = useState([]);
   const dispatch = useDispatch();
+  console.log(currentUser?.userDetail)
 
   // firebase storage
   // allow read;
@@ -82,7 +83,7 @@ export default function Profile() {
     e.preventDefault();
     try {
       dispatch(updateUserStart());
-      const res = await fetch(apiUrl+`/api/user/update/${currentUser._id}`, {
+      const res = await fetch(apiUrl+`/api/user/update/${currentUser?.userDetail._id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -105,7 +106,7 @@ export default function Profile() {
   const handleDeleteUser = async () => {
     try {
       dispatch(deleteUserStart());
-      const res = await fetch(apiUrl+`/api/user/delete/${currentUser._id}`, {
+      const res = await fetch(apiUrl+`/api/user/delete/${currentUser?.userDetail._id}`, {
         method: 'DELETE',
       });
       const data = await res.json();
@@ -132,7 +133,7 @@ export default function Profile() {
   const handleShowListings = async () => {
     try {
       setShowListingsError(false);
-      const res = await fetch(apiUrl+`https://student-nest-vivek.onrender.com/api/user/listings/${currentUser._id}`);
+      const res = await fetch(apiUrl+`https://student-nest-vivek.onrender.com/api/user/listings/${currentUser?.userDetail._id}`);
       const data = await res.json();
       if (data.success === false) {
         setShowListingsError(true);
@@ -176,7 +177,7 @@ export default function Profile() {
         />
         <img
           onClick={() => fileRef.current.click()}
-          src={formData.avatar || currentUser.avatar}
+          src={formData.avatar || currentUser?.userDetail.avatar}
           alt='profile'
           className='rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2'
         />
@@ -196,7 +197,7 @@ export default function Profile() {
         <input
           type='text'
           placeholder='username'
-          defaultValue={currentUser.username}
+          defaultValue={currentUser?.userDetail.username}
           id='username'
           className='border p-3 rounded-lg'
           onChange={handleChange}
@@ -205,7 +206,7 @@ export default function Profile() {
           type='email'
           placeholder='email'
           id='email'
-          defaultValue={currentUser.email}
+          defaultValue={currentUser?.userDetail.email}
           className='border p-3 rounded-lg'
           onChange={handleChange}
         />

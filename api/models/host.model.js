@@ -25,10 +25,10 @@ const hostSchema = new mongoose.Schema({
         required:true,
         unique:true
     },
-    listing:[
+    listings:[
         {
         type:mongoose.Schema.Types.ObjectId,
-        ref:"listing"
+        ref:"Listing",
       }
     ],
 

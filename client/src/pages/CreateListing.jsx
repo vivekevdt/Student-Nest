@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage';
+import axios from 'axios';
+
 import { app } from '../firebase';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -150,7 +152,7 @@ export default function CreateListing() {
 
     setLoading(true);
     try {
-      console.log({ ...formData, userRef: currentUser._id });
+      console.log({ ...formData, hostIdRef: currentUser.userDetail._id });
 
       if (formData.imageUrls.length < 1)
         return setError('You must upload at least one image');
@@ -164,18 +166,24 @@ export default function CreateListing() {
       setError(false);
 
       console.log(formData)
-      // const res = await fetch(apiUrl+'/api/listing/create', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({
-      //     ...formData,
-      //     userRef: currentUser._id,
-      //   }),
-      // });
 
-      // const data = await res.json();
-      // setLoading(false);
-      // if (data.success === false) return setError(data.message);
+      const res = await axios.post(
+        `${apiUrl}/api/listing/create`,
+        {
+          ...formData,
+          hostId: currentUser?.userDetail?._id,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `${currentUser?.token}`, 
+          },
+        }
+      );
+      const data = res.data;    
+      setLoading(false);
+      if (data.success === false) return setError(data.message);
+      alert("New listing is created")
 
       // navigate(`/listing/${data._id}`);
     } catch (err) {
