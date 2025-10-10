@@ -13,12 +13,10 @@ export const createListing = async (req, res, next) => {
       host: hostId,
     }); 
 
-    const updatedHost= await Host.findByIdAndUpdate(hostId, {
+    await Host.findByIdAndUpdate(hostId, {
       $push: { listings: [newListing._id] },
     });
     
-    const hostListing= await  updatedHost.populate('listings')
-
     res.status(201).json({
       success: true,
       message: "Listing created successfully",

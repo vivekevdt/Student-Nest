@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage';
 import axios from 'axios';
+import { toast } from 'react-toastify';
+
 
 import { app } from '../firebase';
 import { useSelector } from 'react-redux';
@@ -182,13 +184,18 @@ export default function CreateListing() {
       );
       const data = res.data;    
       setLoading(false);
-      if (data.success === false) return setError(data.message);
-      alert("New listing is created")
+      if (data.success){
+        toast.success(`🎉 Listing "${data.name}" created successfully!`);
+      } 
+      else{
+        toast.error(`❌ Failed to create listing: ${data?.message || error.message}`);
+
+      }
 
       // navigate(`/listing/${data._id}`);
-    } catch (err) {
-      setError('Something went wrong');
-    } finally {
+    } catch (error) {
+      toast.error('Something went wrong');
+    }finally {
       setLoading(false);
     }
   };

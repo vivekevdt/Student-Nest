@@ -46,7 +46,7 @@ const App = () => {
           <Route path="/update-listing/:listingId" element={<UpdateListing />} />
         </Route>
       </Routes>
-      <ToastContainer />
+      <ToastContainer position="top-right" autoClose={3000} />
 
     </BrowserRouter>
   );
