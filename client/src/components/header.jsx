@@ -92,7 +92,7 @@ export default function Header() {
               <button onClick={handleProfileClick} className="focus:outline-none">
                 <img
                   className="rounded-full h-8 w-8 sm:h-9 sm:w-9 object-cover hover:ring-2 hover:ring-yellow-300 "
-                  src={currentUser.avatar}
+                src={currentUser.userDetail.avatar}
                   alt="profile"
                 />
               </button>

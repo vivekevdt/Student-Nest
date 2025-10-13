@@ -13,7 +13,6 @@ import Listing from './pages/Listing';
 import Search from "./pages/Search";
 import DashboardHome from "./pages/Dashboard/Dashboard";
 import MyListings from "./pages/Dashboard/MyListing";
-import AddListing from "./pages/Dashboard/AddListing";
 import EditListing from "./pages/Dashboard/EditListing";
 import HostSignup from "./pages/HostSignup";
 import { ToastContainer, toast } from 'react-toastify';
@@ -47,7 +46,7 @@ const App = () => {
           <Route path="/update-listing/:listingId" element={<UpdateListing />} />
         </Route>
       </Routes>
-      <ToastContainer />
+      <ToastContainer position="top-right" autoClose={3000} />
 
     </BrowserRouter>
   );

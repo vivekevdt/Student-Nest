@@ -1,14 +1,28 @@
 import Listing from '../models/listing.model.js';
 import { errorHandler } from '../utils/error.js';
+import Host from '../models/host.model.js';
 
 export const createListing = async (req, res, next) => {
 
-  
+
   try {
-    const listing = await Listing.create(req.body);
-    console.log(listing)
-    return res.status(201).json(listing);
-  } catch (error) {
+    const { hostId, ...listingData } = req.body;
+
+    const newListing = await Listing.create({
+      ...listingData,
+      host: hostId,
+    }); 
+
+    await Host.findByIdAndUpdate(hostId, {
+      $push: { listings: [newListing._id] },
+    });
+    
+    res.status(201).json({
+      success: true,
+      message: "Listing created successfully",
+      listing: newListing,
+    });
+    } catch (error) {
     next(error);
   }
 };

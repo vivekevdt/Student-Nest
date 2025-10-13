@@ -33,7 +33,6 @@ export const signup = async (req, res, next) => {
 
 export const signin = async (req, res, next) => {
   const { email, password, role } = req.body;
-
     let validHost;
     let validUser;
   try {
@@ -50,7 +49,6 @@ export const signin = async (req, res, next) => {
       }
     }
 
-
     // Compare the provided password with the hashed password
     const validPassword = await bcrypt.compare(password, role!="host"?validUser.password:validHost.password);
     if (!validPassword) {
@@ -63,18 +61,20 @@ export const signin = async (req, res, next) => {
     // }
 
     // Create JWT token
-    const token = jwt.sign({ id: role!="host"?validUser?._id:validHost?._id }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ id: role!="host"?validUser?._id:validHost?._id,type:role }, process.env.JWT_SECRET, {
       expiresIn: "1h", // Optional: set token expiration
     });
 
     const userDetail = role=="host"?validHost:validUser
 
     // Send the token as an httpOnly cookie
-    res.status(200).json({ token,userDetail });
+
+    res.status(200).json({userDetail,token});
   } catch (error) {
     next(error);
   }
 };
+
 export const google = async (req, res, next) => {
   try {
     const user = await User.findOne({ email: req.body.email });

@@ -31,16 +31,37 @@ app.use(express.json());
 app.use(cookieParser());  // Cookie parser middleware
 app.use(cors());
 
-const allowedOrigins = ['http://localhost:5173', 'https://student-nest-web-vivek.onrender.com'];
+
+
+// Allowed origins
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:3000', // if frontend served from 3000 in dev
+  'https://student-nest-web-vivek.onrender.com'
+];
 
 app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      return callback(null, true);
+  origin: function(origin, callback){
+    // allow requests with no origin like Postman
+    if(!origin) return callback(null, true);
+    if(allowedOrigins.indexOf(origin) === -1){
+      return callback(new Error('CORS Not allowed by server'));
     }
-    callback(new Error('Not allowed by CORS'));
+    return callback(null, true);
   },
-  credentials: true
+  credentials: true, // must allow cookies
+}));
+
+// Handle preflight requests explicitly
+app.options('*', cors({
+  origin: function(origin, callback){
+    if(!origin) return callback(null, true);
+    if(allowedOrigins.indexOf(origin) === -1){
+      return callback(new Error('CORS Not allowed by server'));
+    }
+    return callback(null, true);
+  },
+  credentials: true,
 }));
 
 
