@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link,useNavigate } from 'react-router-dom';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import axiosInstance from '../../utils/axiosInstance';
 
 
 export default function MyListings() {
@@ -40,15 +41,12 @@ export default function MyListings() {
 
   useEffect(() => {
     const fetchListings = async () => {
-      if (useMockData) {
-        setListings(mockListings);
-        return;
-      }
 
       try {
-        const res = await fetch(`/api/listing/user/${currentUser._id}`);
-        const data = await res.json();
-        setListings(data);
+        const res = await axiosInstance.get(`/api/user/listings/${currentUser.userDetail._id}`)
+        const data = res.data
+        console.log(data)
+        setListings(data?.listings);
       } catch (err) {
         console.error('Error fetching listings:', err);
       }
@@ -74,6 +72,7 @@ export default function MyListings() {
   const handleBack = () =>{
     navigate('/dashboard');
   }
+  console.log(listings)
 
   return (
     <div className='flex flex-col gap-4'>
@@ -82,7 +81,7 @@ export default function MyListings() {
       Your Listings
     </h1>
     <div className="flex flex-col items-center justify-center gap-6 p-4">
-       {userListings.map((listing) => (
+       {listings?.map((listing) => (
       <div
         key={listing._id}
         className='w-full max-w-3xl bg-white border border-gray-200 rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden flex flex-col sm:flex-row sm:items-start gap-4'

@@ -1,56 +1,63 @@
-import { useState, useRef, useEffect } from 'react';
-import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage';
-import axios from 'axios';
-import { toast } from 'react-toastify';
+import { useState, useRef, useEffect } from "react";
+import {
+  Box,
+  Grid,
+  TextField,
+  Checkbox,
+  FormControlLabel,
+  Button,
+  Typography,
+  Card,
+  CardContent,
+  CircularProgress,
+} from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { toast } from "react-toastify";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage";
 
-
-import { app } from '../firebase';
-import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
-import MapPicker from '../components/MapPicker';
+import { app } from "../firebase";
+import axiosInstance from "../utils/axiosInstance";
+import MapPicker from "../components/MapPicker";
 
 const CHECKBOX_FIELDS = [
-  { id: 'sharing', label: 'Sharing room' },
-  { id: 'single', label: 'Single room' },
-  { id: 'studyTable', label: 'Study Table' },
-  { id: 'bathroom', label: 'Attached bathroom' },
-  { id: 'balcony', label: 'Balcony' },
-  { id: 'electricityBill', label: 'Electricity Included' },
-  { id: 'offer', label: 'Offer' },
+  { id: "sharing", label: "Sharing Room" },
+  { id: "single", label: "Single Room" },
+  { id: "studyTable", label: "Study Table" },
+  { id: "bathroom", label: "Attached Bathroom" },
+  { id: "balcony", label: "Balcony" },
+  { id: "electricityBill", label: "Electricity Included" },
+  { id: "offer", label: "Offer" },
 ];
 
 export default function CreateListing() {
-
-  let apiUrl;
-
   const host = window.location.hostname;
-  
-  if (host === 'localhost') {
-    apiUrl = 'http://localhost:3000';
-  } else {
-    apiUrl = 'https://student-nest-vivek.onrender.com';
-  }
-  
-  const mapRef = useRef(null);
-  const mapInstance = useRef(null);
-  const markerRef = useRef(null);
+  const apiUrl =
+    host === "localhost"
+      ? "http://localhost:3000"
+      : "https://student-nest-vivek.onrender.com";
+
   const { currentUser } = useSelector((state) => state.user);
   const navigate = useNavigate();
 
+  const mapRef = useRef(null);
+  const mapInstance = useRef(null);
+  const markerRef = useRef(null);
+
   const [files, setFiles] = useState([]);
-  const [imageUploadError, setImageUploadError] = useState('');
+  const [imageUploadError, setImageUploadError] = useState("");
   const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
 
   const [formData, setFormData] = useState({
     imageUrls: [],
-    name: '',
-    description: '',
-    address: '',
-    type: 'single',
+    name: "",
+    description: "",
+    address: "",
+    type: "single",
     floor: 0,
     regularPrice: 50,
     discountPrice: 0,
@@ -59,35 +66,34 @@ export default function CreateListing() {
     bathroom: false,
     balcony: false,
     electricityBill: false,
-    latitude: '',
-    longitude: '',
-    location: null,
+    latitude: "",
+    longitude: "",
   });
 
+  const [validationErrors, setValidationErrors] = useState({});
+
+  // Leaflet map initialization
   useEffect(() => {
     if (!mapRef.current || mapInstance.current) return;
+
     mapInstance.current = L.map(mapRef.current).setView([20.5937, 78.9629], 5);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors',
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution: "&copy; OpenStreetMap contributors",
     }).addTo(mapInstance.current);
 
-    mapInstance.current.on('click', (e) => {
+    mapInstance.current.on("click", (e) => {
       const { lat, lng } = e.latlng;
-      setFormData((prev) => ({
-        ...prev,
-        latitude: lat.toFixed(6),
-        longitude: lng.toFixed(6),
-      }));
+      setFormData((prev) => ({ ...prev, latitude: lat, longitude: lng }));
 
-      if (markerRef.current) {
-        markerRef.current.setLatLng(e.latlng);
-      } else {
-        markerRef.current = L.marker(e.latlng).addTo(mapInstance.current);
-      }
+      if (markerRef.current) markerRef.current.setLatLng(e.latlng);
+      else markerRef.current = L.marker(e.latlng).addTo(mapInstance.current);
+
+      setValidationErrors((prev) => ({ ...prev, latitude: "" }));
     });
   }, []);
 
+  // Firebase image upload
   const storeImage = (file) => {
     return new Promise((resolve, reject) => {
       const storage = getStorage(app);
@@ -96,7 +102,7 @@ export default function CreateListing() {
       const uploadTask = uploadBytesResumable(storageRef, file);
 
       uploadTask.on(
-        'state_changed',
+        "state_changed",
         null,
         reject,
         () => getDownloadURL(uploadTask.snapshot.ref).then(resolve)
@@ -106,11 +112,11 @@ export default function CreateListing() {
 
   const handleImageSubmit = async () => {
     if (files.length + formData.imageUrls.length > 6) {
-      return setImageUploadError('Max 6 images allowed');
+      return setImageUploadError("Max 6 images allowed");
     }
 
     setUploading(true);
-    setImageUploadError('');
+    setImageUploadError("");
 
     try {
       const urls = await Promise.all([...files].map((file) => storeImage(file)));
@@ -118,8 +124,9 @@ export default function CreateListing() {
         ...prev,
         imageUrls: [...prev.imageUrls, ...urls],
       }));
+      setFiles([]);
     } catch {
-      setImageUploadError('Upload failed. Images must be under 2MB');
+      setImageUploadError("Upload failed. Images must be under 2MB");
     } finally {
       setUploading(false);
     }
@@ -134,137 +141,274 @@ export default function CreateListing() {
 
   const handleChange = (e) => {
     const { id, value, type, checked } = e.target;
-    const isBooleanField = type === 'checkbox';
+    const isBooleanField = type === "checkbox";
 
     setFormData((prev) => ({
       ...prev,
       [id]: isBooleanField ? checked : value,
-      ...(id === 'sharing' || id === 'single' ? { type: id } : {}),
+      ...(id === "sharing" || id === "single" ? { type: id } : {}),
     }));
+
+    setValidationErrors((prev) => ({ ...prev, [id]: "" }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-    if (formData.imageUrls.length < 1) return setError('Upload at least 1 image');
+    setValidationErrors({});
+
+    let errors = {};
+    if (!formData.name.trim()) errors.name = "Name is required";
+    if (!formData.description.trim()) errors.description = "Description is required";
+    if (!formData.address.trim()) errors.address = "Address is required";
+    if (formData.imageUrls.length < 1) errors.images = "Upload at least 1 image";
     if (+formData.discountPrice > +formData.regularPrice)
-      return setError('Discount must be lower than regular price');
+      errors.discountPrice = "Discount must be lower than regular price";
     if (!formData.latitude || !formData.longitude)
-      return setError('Select a location on the map');
+      errors.latitude = "Select a location on the map";
+
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
+      return;
+    }
 
     setLoading(true);
     try {
-      console.log({ ...formData, hostIdRef: currentUser.userDetail._id });
+      const res = await axiosInstance.post(`${apiUrl}/api/listing/create`, {
+        ...formData,
+        hostId: currentUser?.userDetail?._id,
+      });
 
-      if (formData.imageUrls.length < 1)
-        return setError('You must upload at least one image');
-      if (+formData.regularPrice < +formData.discountPrice)
-        return setError('Discount price must be lower than regular price');
-
-      if (!formData.latitude )
-        return setError('Please select a location on the map');
-
-      setLoading(true);
-      setError(false);
-
-      console.log(formData)
-
-      const res = await axios.post(
-        `${apiUrl}/api/listing/create`,
-        {
-          ...formData,
-          hostId: currentUser?.userDetail?._id,
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `${currentUser?.token}`, 
-          },
-        }
-      );
-      const data = res.data;    
+      const data = res.data;
       setLoading(false);
-      if (data.success){
-        toast.success(`🎉 Listing "${data.name}" created successfully!`);
-      } 
-      else{
-        toast.error(`❌ Failed to create listing: ${data?.message || error.message}`);
 
+      if (data.success) {
+        toast.success("🎉 Listing created successfully!");
+        // navigate(`/listing/${data._id}`);
+      } else {
+        toast.error(`❌ Failed to create listing: ${data?.message || "Error"}`);
       }
-
-      // navigate(`/listing/${data._id}`);
-    } catch (error) {
-      toast.error('Something went wrong');
-    }finally {
+    } catch {
+      toast.error("Something went wrong");
+    } finally {
       setLoading(false);
     }
   };
 
   return (
-    <main className='p-3 max-w-4xl mx-auto'>
-      <h1 className='text-3xl font-semibold text-center my-7'>Create a Listing</h1>
-      <form onSubmit={handleSubmit} className='flex flex-col sm:flex-row gap-4'>
-        <div className='flex flex-col gap-4 flex-1'>
-          <input type='text' id='name' value={formData.name} placeholder='Name' required className='border p-3 rounded-lg' onChange={handleChange} />
-          <textarea id='description' value={formData.description} placeholder='Description' required className='border p-3 rounded-lg' onChange={handleChange} />
-          <input type='text' id='address' value={formData.address} placeholder='Address' required className='border p-3 rounded-lg' onChange={handleChange} />
+    <Box
+      sx={{
+        background: "linear-gradient(to right, #e0f7fa, #f3e5f5)",
+        minHeight: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        py: 4,
+        px: 2,
+      }}
+    >
+      <Card sx={{ maxWidth: 1000, width: "100%", borderRadius: 3, boxShadow: 6 }}>
+        <CardContent>
+          <Typography variant="h4" fontWeight="bold" textAlign="center" mb={3}>
+            Create a Listing
+          </Typography>
 
-          <div className='flex flex-wrap gap-6'>
-            {CHECKBOX_FIELDS.map(({ id, label }) => (
-              <label key={id} className='flex items-center gap-2'>
-                <input type='checkbox' id={id} checked={formData[id] || formData.type === id} onChange={handleChange} className='w-5 h-5' />
-                {label}
-              </label>
-            ))}
-          </div>
+          <form onSubmit={handleSubmit}>
+            <Grid container spacing={3}>
+              {/* Left Section */}
+              <Grid item xs={12} md={6}>
+                <TextField
+                  label="Name"
+                  id="name"
+                  fullWidth
+                  value={formData.name}
+                  onChange={handleChange}
+                  error={!!validationErrors.name}
+                  helperText={validationErrors.name}
+                />
+                <TextField
+                  label="Description"
+                  id="description"
+                  fullWidth
+                  multiline
+                  rows={3}
+                  value={formData.description}
+                  onChange={handleChange}
+                  error={!!validationErrors.description}
+                  helperText={validationErrors.description}
+                  sx={{ mt: 2 }}
+                />
+                <TextField
+                  label="Address"
+                  id="address"
+                  fullWidth
+                  value={formData.address}
+                  onChange={handleChange}
+                  error={!!validationErrors.address}
+                  helperText={validationErrors.address}
+                  sx={{ mt: 2 }}
+                />
 
-          <div className='flex flex-wrap gap-6'>
-            <div className='flex items-center gap-2'>
-              <input type='number' id='floor' value={formData.floor} onChange={handleChange} className='p-3 border rounded-lg' />
-              <span>Floor</span>
-            </div>
-            <div className='flex items-center gap-2'>
-              <input type='number' id='regularPrice' value={formData.regularPrice} onChange={handleChange} className='p-3 border rounded-lg' />
-              <span>Regular Price (₹/month)</span>
-            </div>
-            {formData.offer && (
-              <div className='flex items-center gap-2'>
-                <input type='number' id='discountPrice' value={formData.discountPrice} onChange={handleChange} className='p-3 border rounded-lg' />
-                <span>Discount Price (₹/month)</span>
-              </div>
-            )}
-          </div>
-        </div>
+                <Box sx={{ display: "flex", flexWrap: "wrap", mt: 2 }}>
+                  {CHECKBOX_FIELDS.map(({ id, label }) => (
+                    <FormControlLabel
+                      key={id}
+                      control={
+                        <Checkbox
+                          id={id}
+                          checked={formData[id] || formData.type === id}
+                          onChange={handleChange}
+                        />
+                      }
+                      label={label}
+                    />
+                  ))}
+                </Box>
 
-        {/* Right Side */}
-        <div className='flex flex-col gap-4 flex-1'>
-          <p className='font-semibold'>Images: <span className='text-gray-600'>First image is cover (max 6)</span></p>
-          <div className='flex gap-4'>
-            <input type='file' multiple accept='image/*' onChange={(e) => setFiles(e.target.files)} className='p-3 border rounded w-full' />
-            <button type='button' onClick={handleImageSubmit} disabled={uploading} className='p-3 text-green-700 border rounded hover:shadow-lg'>
-              {uploading ? 'Uploading...' : 'Upload'}
-            </button>
-          </div>
-          {imageUploadError && <p className='text-red-700 text-sm'>{imageUploadError}</p>}
+                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, mt: 2 }}>
+                  <TextField
+                    label="Floor"
+                    id="floor"
+                    type="number"
+                    value={formData.floor}
+                    onChange={handleChange}
+                    sx={{ width: "48%" }}
+                  />
+                  <TextField
+                    label="Regular Price (₹/month)"
+                    id="regularPrice"
+                    type="number"
+                    value={formData.regularPrice}
+                    onChange={handleChange}
+                    sx={{ width: "48%" }}
+                  />
+                  {formData.offer && (
+                    <TextField
+                      label="Discount Price (₹/month)"
+                      id="discountPrice"
+                      type="number"
+                      value={formData.discountPrice}
+                      onChange={handleChange}
+                      error={!!validationErrors.discountPrice}
+                      helperText={validationErrors.discountPrice}
+                      sx={{ width: "100%" }}
+                    />
+                  )}
+                </Box>
+              </Grid>
 
-          {formData.imageUrls.map((url, index) => (
-            <div key={url} className='flex justify-between items-center p-3 border'>
-              <img src={url} alt='Listing' className='w-20 h-20 object-contain rounded' />
-              <button onClick={() => handleRemoveImage(index)} className='text-red-700'>Delete</button>
-            </div>
-          ))}
-                <MapPicker onLocationSelect={({ lat, lng }) => setFormData({ ...formData, latitude: lat, longitude: lng })} />
+              {/* Right Section */}
+              <Grid item xs={12} md={6}>
+                <Typography fontWeight="medium" mb={1}>
+                  Images (max 6)
+                </Typography>
 
+                {/* Upload Row */}
+                <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+                  <input
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    onChange={(e) => setFiles(e.target.files)}
+                    style={{ flex: 1 }}
+                  />
+                  <Button
+                    variant="outlined"
+                    color="success"
+                    onClick={handleImageSubmit}
+                    disabled={uploading}
+                  >
+                    {uploading ? <CircularProgress size={20} /> : "Upload"}
+                  </Button>
+                </Box>
+                {(imageUploadError || validationErrors.images) && (
+                  <Typography color="error" variant="body2" mt={1}>
+                    {imageUploadError || validationErrors.images}
+                  </Typography>
+                )}
 
-          <button disabled={loading || uploading} className='p-3 bg-slate-700 text-white rounded hover:opacity-95'>
-            {loading ? 'Creating...' : 'Create Listing'}
-          </button>
+                {/* Image Slider */}
+                {formData.imageUrls.length > 0 && (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      overflowX: "auto",
+                      gap: 2,
+                      mt: 2,
+                      pb: 1,
+                      "&::-webkit-scrollbar": { height: 6 },
+                      "&::-webkit-scrollbar-thumb": { backgroundColor: "#bbb", borderRadius: 3 },
+                    }}
+                  >
+                    {formData.imageUrls.map((url, index) => (
+                      <Box
+                        key={url}
+                        sx={{
+                          position: "relative",
+                          minWidth: 120,
+                          height: 120,
+                          borderRadius: 2,
+                          overflow: "hidden",
+                          boxShadow: 2,
+                          flexShrink: 0,
+                        }}
+                      >
+                        <img
+                          src={url}
+                          alt="Listing"
+                          style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 8 }}
+                        />
+                        <Button
+                          onClick={() => handleRemoveImage(index)}
+                          size="small"
+                          sx={{
+                            position: "absolute",
+                            top: 4,
+                            right: 4,
+                            minWidth: 0,
+                            width: 28,
+                            height: 28,
+                            borderRadius: "50%",
+                            backgroundColor: "rgba(0,0,0,0.6)",
+                            color: "white",
+                            "&:hover": { backgroundColor: "rgba(255,0,0,0.8)" },
+                          }}
+                        >
+                          <DeleteIcon fontSize="small" />
+                        </Button>
+                      </Box>
+                    ))}
+                  </Box>
+                )}
 
-          {error && <p className='text-red-700'>{error}</p>}
-        </div>
-      </form>
+                {/* Map Picker */}
+                <Box sx={{ mt: 3 }}>
+                  <MapPicker
+                    onLocationSelect={({ lat, lng }) =>
+                      setFormData({ ...formData, latitude: lat, longitude: lng })
+                    }
+                  />
+                  {validationErrors.latitude && (
+                    <Typography color="error" variant="body2" mt={1}>
+                      {validationErrors.latitude}
+                    </Typography>
+                  )}
+                </Box>
 
-      
-    </main>
+                {/* Submit Button */}
+                <Button
+                  type="submit"
+                  variant="contained"
+                  fullWidth
+                  sx={{ mt: 3, py: 1.5, backgroundColor: "#1565c0", "&:hover": { backgroundColor: "#0d47a1" } }}
+                  disabled={loading || uploading}
+                >
+                  {loading ? <CircularProgress size={24} color="inherit" /> : "Create Listing"}
+                </Button>
+              </Grid>
+            </Grid>
+          </form>
+        </CardContent>
+      </Card>
+    </Box>
   );
 }

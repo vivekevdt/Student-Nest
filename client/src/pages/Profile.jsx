@@ -7,6 +7,10 @@ import {
   uploadBytesResumable,
 } from 'firebase/storage';
 import { app } from '../firebase';
+import TextField from '@mui/material/TextField';
+import  CameraAlt from "@mui/icons-material/CameraAlt"
+
+
 import {
   updateUserStart,
   updateUserSuccess,
@@ -83,7 +87,7 @@ export default function Profile() {
     e.preventDefault();
     try {
       dispatch(updateUserStart());
-      const res = await fetch(apiUrl+`/api/user/update/${currentUser?.userDetail._id}`, {
+      const res = await fetch(apiUrl + `/api/user/update/${currentUser?.userDetail._id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -106,7 +110,7 @@ export default function Profile() {
   const handleDeleteUser = async () => {
     try {
       dispatch(deleteUserStart());
-      const res = await fetch(apiUrl+`/api/user/delete/${currentUser?.userDetail._id}`, {
+      const res = await fetch(apiUrl + `/api/user/delete/${currentUser?.userDetail._id}`, {
         method: 'DELETE',
       });
       const data = await res.json();
@@ -133,7 +137,7 @@ export default function Profile() {
   const handleShowListings = async () => {
     try {
       setShowListingsError(false);
-      const res = await fetch(apiUrl+`https://student-nest-vivek.onrender.com/api/user/listings/${currentUser?.userDetail._id}`);
+      const res = await fetch(apiUrl + `https://student-nest-vivek.onrender.com/api/user/listings/${currentUser?.userDetail._id}`);
       const data = await res.json();
       if (data.success === false) {
         setShowListingsError(true);
@@ -148,7 +152,7 @@ export default function Profile() {
 
   const handleListingDelete = async (listingId) => {
     try {
-      const res = await fetch(apiUrl+`/api/listing/delete/${listingId}`, {
+      const res = await fetch(apiUrl + `/api/listing/delete/${listingId}`, {
         method: 'DELETE',
       });
       const data = await res.json();
@@ -194,29 +198,28 @@ export default function Profile() {
             ''
           )}
         </p>
-        <input
-          type='text'
-          placeholder='username'
+        <TextField
+          id="outlined-basic"
+          label="First Name"
+          variant="outlined"
           defaultValue={currentUser?.userDetail.username}
-          id='username'
-          className='border p-3 rounded-lg'
-          onChange={handleChange}
+
         />
-        <input
-          type='email'
-          placeholder='email'
-          id='email'
-          defaultValue={currentUser?.userDetail.email}
-          className='border p-3 rounded-lg'
-          onChange={handleChange}
+        <TextField
+          id="outlined-basic"
+          label="Last Name"
+          variant="outlined"
+          defaultValue={currentUser?.userDetail.username}
+
         />
-        <input
-          type='password'
-          placeholder='password'
-          onChange={handleChange}
-          id='password'
-          className='border p-3 rounded-lg'
+        <TextField
+          id="outlined-basic"
+          label="Phone no."
+          variant="outlined"
+          defaultValue={currentUser?.userDetail.username}
         />
+
+
         <button
           disabled={loading}
           className='bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95 disabled:opacity-80'

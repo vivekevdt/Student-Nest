@@ -17,6 +17,9 @@ const userSlice = createSlice({
       state.currentUser = action.payload;
       state.loading = false;
       state.error = null;
+      if (action.payload?.token) {
+        localStorage.setItem("token", action.payload.token);
+      }
     },
     signInFailure: (state, action) => {
       state.error = action.payload;
