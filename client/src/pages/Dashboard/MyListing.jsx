@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link,useNavigate } from 'react-router-dom';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 
 
 export default function MyListings() {
@@ -77,7 +79,7 @@ export default function MyListings() {
 
   return (
     <div className='flex flex-col gap-4'>
-    <button className="flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition mt-5 ml-3 w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12" onClick={handleBack}><ArrowBackIosNewIcon fontSize="small"/></button>
+    <button className="flex items-center gap-2 bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-700 transition mt-5 ml-3 w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12" onClick={handleBack}><ArrowBackIosNewIcon fontSize="small"/></button>
     <h1 className='text-center mt-3 text-3xl font-semibold'>
       Your Listings
     </h1>
@@ -139,15 +141,15 @@ export default function MyListings() {
         </div>
         
         {/* BUTTON SECTION */}
-        <div className='flex justify-center sm:justify-start gap-3 mt-4'>
+        <div className='flex justify-end sm:justify-start gap-3 mt-auto p-4'>
           <button
             onClick={() => handleListingDelete(listing._id)}
             className='text-red-700 uppercase'
           >
-            Delete
+            <DeleteIcon/>
           </button>
           <Link to={`/update-listing/${listing._id}`}>
-            <button className='text-green-700 uppercase mr-2'>Edit</button>
+            <button className='text-green-700 uppercase mr-2'><EditIcon/></button>
           </Link>
         </div>
       </div>
