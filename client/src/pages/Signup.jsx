@@ -3,6 +3,14 @@ import { Link,useNavigate } from 'react-router-dom';
 
 
 const Signup = () => {
+  let apiUrl;
+
+  const host = window.location.hostname;
+  if (host === 'localhost') {
+    apiUrl = 'http://localhost:3000';
+  } else {
+    apiUrl = 'https://student-nest-vivek.onrender.com';
+  }
   const navigate=useNavigate();
   const [formData, setFormData]= useState({});
   const [error,setError]= useState(null);
@@ -21,7 +29,7 @@ const Signup = () => {
     setLoading(true);
 
     try{
-      const res = await fetch('https://student-nest-vivek.onrender.com/api/auth/signup',
+      const res = await fetch(apiUrl+'/api/auth/signup',
     {
       method:"POST",
       headers:{
@@ -45,13 +53,10 @@ const Signup = () => {
     }catch(e){
       setLoading(false);
       setError(data.message);
-
-     
+    
     }
     
-   
   }
-
 
 
   return (

@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 
-
 const userSchema = new mongoose.Schema({
     username:{
         type:String,
@@ -17,10 +16,6 @@ const userSchema = new mongoose.Schema({
         required:true,
         unique:true
     },
-    role:{
-        type:String,
-        default:"student"
-    },
     listing:[
         {
         type:mongoose.Schema.Types.ObjectId,
@@ -28,7 +23,6 @@ const userSchema = new mongoose.Schema({
       }
     ],
 
-    
     avatar:{
         type:String,
         default:"https://images.app.goo.gl/Z8Requu9qEHYfSTMA"

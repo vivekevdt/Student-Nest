@@ -1,111 +1,143 @@
-import User from '../models/user.model.js';
-import bcrypt from 'bcrypt';
-import { errorHandler } from '../utils/error.js';
-import jwt from 'jsonwebtoken';
+import User from "../models/user.model.js";
+import Host from "../models/host.model.js";
+import bcrypt from "bcrypt";
+import { errorHandler } from "../utils/error.js";
+import jwt from "jsonwebtoken";
 
 export const signup = async (req, res, next) => {
-    const { username, email, password } = req.body;
+  const { username, email, password } = req.body;
 
-    try {
-        // Check if the user already exists
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            return next(errorHandler(400, "User already exists"));
-        }
-
-        // Hash the password with bcrypt
-        // const saltRounds = 10;
-        // const hashedPassword = await bcrypt.hash(password, saltRounds);
-
-        // Create a new user with the hashed password
-        const newUser = new User({ username, email, password });
-
-        await newUser.save();
-        console.log("User created successfully");
-        res.status(201).json("User created successfully");
-
-    } catch (error) {
-        console.log(error.message);
-        next(errorHandler(500, "An error occurred while creating the user"));
+  try {
+    // check for owner
+    // Check if the user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return next(errorHandler(400, "User already exists"));
     }
+
+    // Hash the password with bcrypt
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    // Create a new user with the hashed password
+    const newUser = new User({ username, email, hashedPassword });
+
+    await newUser.save();
+    console.log("User created successfully");
+    res.status(201).json("User created successfully");
+  } catch (error) {
+    console.log(error.message);
+    next(errorHandler(500, "An error occurred while creating the user"));
+  }
 };
 
 export const signin = async (req, res, next) => {
-    const { email, password } = req.body;
-
-    try {
-        // Find user by email
-        const validUser = await User.findOne({ email });
-        if (!validUser) {
-            return next(errorHandler(404, "User not found"));
-        }
-
-        // Compare the provided password with the hashed password
-        // const validPassword = await bcrypt.compare(password, validUser.password);
-        // if (!validPassword) {
-        //     return next(errorHandler(401, "Wrong credentials"));
-        // }
-
-        // Directly compare the plain-text password
-        if (password !== validUser.password) {
-            return next(errorHandler(401, "Wrong credentials"));
-        }
-
-        // Create JWT token
-        const token = jwt.sign({ id: validUser._id }, process.env.
-            JWT_SECRET, {
-            expiresIn: "1h",  // Optional: set token expiration
-        });
-
-
-        // Send the token as an httpOnly cookie
-        res.
-            status(200)
-            .json({token});
-
-    } catch (error) {
-        next(error);
-    }
-};
-export const google = async (req, res, next) => {
-    try {
-      const user = await User.findOne({ email: req.body.email });
-      if (user) {
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-        const { password: pass, ...rest } = user._doc;
-        res
-          .cookie('access_token', token, { httpOnly: true })
-          .status(200)
-          .json(rest);
-      } else {
-        const generatedPassword =
-          Math.random().toString(36).slice(-8) +
-          Math.random().toString(36).slice(-8);
-        const newUser = new User({
-          username:
-            req.body.name.split(' ').join('').toLowerCase() +
-            Math.random().toString(36).slice(-4),
-          email: req.body.email,
-          password: generatedPassword,
-          avatar: req.body.photo,
-        });
-        await newUser.save();
-        const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
-        const { password: pass, ...rest } = newUser._doc;
-        res.
-            status(200)
-            .json({token});
+  const { email, password, role } = req.body;
+    let validHost;
+    let validUser;
+  try {
+    //check for host
+    if (role == "host") {
+       validHost = await Host.findOne({ email });
+      if (!validHost) {
+        return next(errorHandler(404, "Host not found"));
       }
-    } catch (error) {
-      next(error);
+    } else {
+       validUser = await User.findOne({ email });
+      if (!validUser) {
+        return next(errorHandler(404, "User not found"));
+      }
     }
-  };
-  
-  export const signOut = async (req, res, next) => {
-    try {
-      res.clearCookie('access_token');
-      res.status(200).json('User has been logged out!');
-    } catch (error) {
-      next(error);
+
+    // Compare the provided password with the hashed password
+    const validPassword = await bcrypt.compare(password, role!="host"?validUser.password:validHost.password);
+    if (!validPassword) {
+        return next(errorHandler(401, "Wrong credentials"));
     }
-  };
+    
+
+    // if (password !== role!="host"?validUser?.password:validHost?.password) {
+    //   return next(errorHandler(401, "Wrong credentials"));
+    // }
+
+    // Create JWT token
+    const token = jwt.sign({ id: role!="host"?validUser?._id:validHost?._id,type:role }, process.env.JWT_SECRET, {
+      expiresIn: "1h", // Optional: set token expiration
+    });
+
+    const userDetail = role=="host"?validHost:validUser
+
+    // Send the token as an httpOnly cookie
+
+    res.status(200).json({userDetail,token});
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const google = async (req, res, next) => {
+  try {
+    const user = await User.findOne({ email: req.body.email });
+    if (user) {
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+      const { password: pass, ...rest } = user._doc;
+      res.status(200).json({ rest, token });
+    } else {
+      const generatedPassword =
+        Math.random().toString(36).slice(-8) +
+        Math.random().toString(36).slice(-8);
+      const newUser = new User({
+        username:
+          req.body.name.split(" ").join("").toLowerCase() +
+          Math.random().toString(36).slice(-4),
+        email: req.body.email,
+        password: generatedPassword,
+        avatar: req.body.photo,
+      });
+      await newUser.save();
+      const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
+      const { password: pass, ...rest } = newUser._doc;
+      res.status(200).json({ token });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const signOut = async (req, res, next) => {
+  try {
+    res.clearCookie("access_token");
+    res.status(200).json("User has been logged out!");
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const signupHost = async (req, res, next) => {
+  const { firstName, lastName, email, contact, password } = req.body;
+  console.log("user verified");
+  console.log(req.body)
+
+  try {
+    // Check if the user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return next(errorHandler(400, "User already exists"));
+    }
+
+    // Hash the password with bcrypt
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    console.log(hashedPassword)
+
+    // Create a new user with the hashed password
+    const newHost = new Host({ firstName, lastName, contact, email, password:hashedPassword });
+
+    await newHost.save();
+    console.log("Host created successfully");
+    res.status(201).json("Host created successfully");
+  } catch (error) {
+    console.log(error.message);
+    next(errorHandler(500, "An error occurred while creating the user"));
+  }
+};
